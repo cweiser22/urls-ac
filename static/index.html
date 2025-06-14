@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en" x-data="urlShortener()" class="h-full">
+<head>
+    <meta charset="UTF-8" />
+    <title>TinyURL Clone</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+</head>
+<body class="bg-gray-100 flex items-center justify-center h-full">
+
+<div class="bg-white p-6 rounded shadow max-w-md w-full">
+    <template x-if="!result">
+        <form @submit.prevent="submit" class="space-y-4">
+            <h1 class="text-xl font-bold">Shorten a URL</h1>
+
+            <input type="text" required x-model="url"
+                   placeholder="Enter a long URL..."
+                   class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring focus:border-blue-300" />
+
+            <button type="submit"
+                    class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded w-full">
+                Shorten
+            </button>
+        </form>
+    </template>
+
+    <template x-if="result">
+        <div class="text-center space-y-4">
+            <h2 class="text-lg font-semibold">Here's your short URL:</h2>
+            <a :href="result" x-text="result" target="_blank"
+               class="text-blue-600 underline break-all"></a>
+            <button @click="reset"
+                    class="bg-gray-700 text-white px-4 py-2 rounded hover:bg-gray-800">
+                Shorten another
+            </button>
+        </div>
+    </template>
+</div>
+
+<script>
+    function urlShortener() {
+        return {
+            url: '',
+            result: null,
+
+            async submit() {
+                try {
+                    const res = await fetch('/api/v1/mappings', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ longUrl: this.url })
+                    });
+
+                    if (!res.ok) throw new Error('Failed to shorten URL');
+
+                    const data = await res.json();
+                    this.result = 'http://localhost:8080/' + data.shortCode;  // expects { "short_url": "http://..." }
+                } catch (err) {
+                    alert(err.message || 'Unknown error');
+                }
+            },
+
+            reset() {
+                this.url = '';
+                this.result = null;
+            }
+        };
+    }
+</script>
+
+</body>
+</html>
