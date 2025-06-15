@@ -35,7 +35,7 @@ func GetTestPostgres() (*TestPostgres, error) {
 	return testPG, initErr
 }
 
-// startPostgresContainer boots a PostgreSQL container and applies init.sql.
+// startPostgresContainer boots a PostgreSQL container and applies test_db_init.sql.
 func startPostgresContainer(ctx context.Context) (*TestPostgres, error) {
 	container, err := postgres.Run(
 		ctx,
@@ -43,7 +43,7 @@ func startPostgresContainer(ctx context.Context) (*TestPostgres, error) {
 		postgres.WithDatabase("testdb"),
 		postgres.WithUsername("testuser"),
 		postgres.WithPassword("testpass"),
-		postgres.WithInitScripts("../postgres/init.sql"),
+		postgres.WithInitScripts("../postgres/test_db_init.sql"),
 	)
 	if err != nil {
 		return nil, fmt.Errorf("failed to start container: %w", err)

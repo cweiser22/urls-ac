@@ -3,9 +3,11 @@ package main
 import (
 	"github.com/cweiser22/urls-ac/db"
 	"github.com/cweiser22/urls-ac/handlers"
+	"github.com/cweiser22/urls-ac/metrics"
 	"github.com/cweiser22/urls-ac/service"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"net/http"
 )
 
@@ -22,7 +24,7 @@ func main() {
 		panic(err)
 	}
 
-	shortCodeService := service.NewShortCodeService(DB, redisClient)
+	shortCodeService := service.NewShortCodeService(DB, redisClient, metrics.CacheRequests)
 
 	indexHandler := handlers.NewIndexHandler()
 	healthCheckHandler := handlers.NewHealthCheckHandler()
@@ -32,9 +34,12 @@ func main() {
 	r.Use(middleware.Logger)
 
 	r.Get("/", indexHandler.IndexHandler)
+
 	r.Get("/{shortCode}", urlHandler.RedirectFromMapping)
 	r.Get("/api/v1/health", healthCheckHandler.HealthCheckHandler)
 	r.Post("/api/v1/mappings", urlHandler.CreateShortURL)
+
+	r.Handle("/api/v1/metrics", promhttp.Handler())
 
 	err = http.ListenAndServe(":8080", r)
 	if err != nil {

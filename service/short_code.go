@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"github.com/cweiser22/urls-ac/models"
 	"github.com/jmoiron/sqlx"
+	"github.com/prometheus/client_golang/prometheus"
 	"github.com/redis/go-redis/v9"
 	"log"
 	"math/big"
@@ -16,14 +17,16 @@ import (
 const base62Alphabet = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
 
 type ShortCodeService struct {
-	DB          *sqlx.DB
-	RedisClient *redis.Client
+	DB           *sqlx.DB
+	RedisClient  *redis.Client
+	CacheMetrics *prometheus.CounterVec
 }
 
-func NewShortCodeService(db *sqlx.DB, redisClient *redis.Client) *ShortCodeService {
+func NewShortCodeService(db *sqlx.DB, redisClient *redis.Client, cacheMetrics *prometheus.CounterVec) *ShortCodeService {
 	return &ShortCodeService{
-		DB:          db,
-		RedisClient: redisClient,
+		DB:           db,
+		RedisClient:  redisClient,
+		CacheMetrics: cacheMetrics,
 	}
 }
 
@@ -57,12 +60,12 @@ func (s *ShortCodeService) insertShortcode(shortCode string, longURL string) err
 	return err
 }
 
-// findMatchOrCollision checks if the generated short code matches an existing URL or collides with another
-// if a short code with the same URL exists, it returns false and the existing URL
-// if a short code with a different URL exists, it returns true to indicate a collision
+// findMatchOrCollision checks if the generated short code matches an existing URLMapping or collides with another
+// if a short code with the same URLMapping exists, it returns false and the existing URLMapping
+// if a short code with a different URLMapping exists, it returns true to indicate a collision
 // it returns an error if the database query fails
-func (s *ShortCodeService) findMatchOrCollision(shortCode string, longURL string) (bool, *models.URL, error) {
-	var existing models.URL
+func (s *ShortCodeService) findMatchOrCollision(shortCode string, longURL string) (bool, *models.URLMapping, error) {
+	var existing models.URLMapping
 
 	err := s.DB.Get(&existing, `
 		SELECT id, long_url, short_code, created_at
@@ -79,20 +82,20 @@ func (s *ShortCodeService) findMatchOrCollision(shortCode string, longURL string
 	}
 
 	if existing.LongURL == longURL {
-		// Same long URL: treat as match (not a collision)
+		// Same long URLMapping: treat as match (not a collision)
 		return false, &existing, nil
 	}
 
-	// Different long URL: it's a collision
+	// Different long URLMapping: it's a collision
 	return true, nil, nil
 }
 
-func (s *ShortCodeService) GetOrCreateMapping(longURL string) (*models.URL, error) {
+func (s *ShortCodeService) GetOrCreateMapping(longURL string) (*models.URLMapping, error) {
 	// this function is the core logic that creates url mappings
 	// it will iterate through numbers 6 to 15
 	// for each number, it will attempt to generate a short code
 	// then it will check for a collision or match
-	// if there is a match, it will return the existing URL
+	// if there is a match, it will return the existing URLMapping
 	// if there is a collision, it will continue to the next number
 	// if there is no match or collision, it will insert the new mapping and return it
 	validLengths := []int{6, 7, 8, 9, 10, 11, 12, 13, 14, 15}
@@ -109,21 +112,21 @@ func (s *ShortCodeService) GetOrCreateMapping(longURL string) (*models.URL, erro
 		}
 
 		if existingURL != nil {
-			return existingURL, nil // Match found, return existing URL
+			return existingURL, nil // Match found, return existing URLMapping
 		}
 
 		// No match or collision, insert new mapping
-		newURL := models.NewURL(0, longURL, shortCode)
+		newURL := models.NewURLMapping(0, longURL, shortCode)
 		if err := s.insertShortcode(newURL.ShortCode, newURL.LongURL); err != nil {
 			return nil, fmt.Errorf("error inserting new shortcode: %w", err)
 		}
-		return newURL, nil // Return the newly created URL mapping
+		return newURL, nil // Return the newly created URLMapping mapping
 	}
 	// If we reach here, it means we couldn't find a valid shortcode
 	return nil, fmt.Errorf("could not find a valid shortcode for %s (this is exceedingly rare)", longURL)
 }
 
-func (s *ShortCodeService) CacheMapping(mapping models.URL) error {
+func (s *ShortCodeService) CacheMapping(mapping models.URLMapping) error {
 	// cache key code:shortCode to value longURL in redis
 	cacheKey := fmt.Sprintf("code:%s", mapping.ShortCode)
 	err := s.RedisClient.Set(context.Background(), cacheKey, mapping.LongURL, time.Second*60).Err()
@@ -139,36 +142,36 @@ func (s *ShortCodeService) GetCachedMapping(shortCode string) (string, error) {
 	longURL, err := s.RedisClient.Get(context.Background(), cacheKey).Result()
 	if err != nil {
 		if errors.Is(err, redis.Nil) {
+
 			return "", nil // No cached mapping found
 		}
 		return "", fmt.Errorf("error retrieving cached mapping: %w", err)
 	}
-	err = s.CacheMapping(models.URL{
+	err = s.CacheMapping(models.URLMapping{
 		LongURL:   longURL,
 		ShortCode: shortCode,
 	})
 	if err != nil {
 		return "", fmt.Errorf("error resetting ttl for cached mapping: %w", err)
 	} // reset ttl
-	return longURL, nil // Return the cached long URL
+	return longURL, nil // Return the cached long URLMapping
 }
 
-// GetMapping retrieves a URL mapping by its short code.
+// GetMapping retrieves a URLMapping mapping by its short code.
 func (s *ShortCodeService) GetLongURL(shortCode string) (string, error) {
 
 	cachedURL, err := s.GetCachedMapping(shortCode)
 	if err != nil {
-
 		log.Println("cache unavailable, falling back to database:", err)
 	}
 
 	if cachedURL != "" {
-		log.Println("cache hit for short code:", shortCode)
-		return cachedURL, nil // Return cached URL if available
+		s.CacheMetrics.With(prometheus.Labels{"result": "hit"}).Inc()
+		return cachedURL, nil // Return cached URLMapping if available
 	}
-	log.Println("cache miss for short code:", shortCode)
-	
-	var url models.URL
+	s.CacheMetrics.With(prometheus.Labels{"result": "miss"}).Inc()
+
+	var url models.URLMapping
 	err = s.DB.Get(&url, `
 		SELECT id, long_url, short_code, created_at
 		FROM url_mappings
@@ -182,10 +185,10 @@ func (s *ShortCodeService) GetLongURL(shortCode string) (string, error) {
 		return "", fmt.Errorf("error retrieving mapping: %w", err)
 	}
 
-	// Cache the found URL mapping for future requests
+	// Cache the found URLMapping mapping for future requests
 	if err := s.CacheMapping(url); err != nil {
 		return "", fmt.Errorf("error caching mapping: %w", err)
 	}
 
-	return url.LongURL, nil // Return the found URL mapping
+	return url.LongURL, nil // Return the found URLMapping mapping
 }
