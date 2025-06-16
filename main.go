@@ -8,18 +8,34 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
+	"github.com/spf13/viper"
 	"net/http"
 )
 
 func main() {
-	DB, err := db.NewPostgresDB("postgres://postgres:postgres@localhost:5532/url_shortener?sslmode=disable")
+	viper.AutomaticEnv()
+
+	viper.BindEnv("postgres_connection_string", "POSTGRES_CONNECTION_STRING")
+	viper.BindEnv("redis_connection_string", "REDIS_CONNECTION_STRING")
+	viper.BindEnv("port", "PORT")
+	viper.BindEnv("environment", "ENVIRONMENT")
+
+	viper.SetDefault("postgres_connection_string", "postgres://postgres:postgres@postgres:5432/url_shortener?sslmode=disable")
+	viper.SetDefault("redis_connection_string", "redis:6379")
+	viper.SetDefault("port", "8080")
+	viper.SetDefault("environment", "dev")
+
+	postgresConnectionString := viper.GetString("postgres_connection_string")
+	redisConnectionString := viper.GetString("redis_connection_string")
+
+	DB, err := db.NewPostgresDB(postgresConnectionString)
 	if err != nil {
 		panic(err)
 	}
 
 	// Initialize the Redis client
 	// Assuming Redis is running on localhost:6479
-	redisClient, err := db.NewRedisClient("localhost:6479")
+	redisClient, err := db.NewRedisClient(redisConnectionString)
 	if err != nil {
 		panic(err)
 	}

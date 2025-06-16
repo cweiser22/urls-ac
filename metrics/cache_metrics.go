@@ -7,8 +7,8 @@ import (
 
 var CacheRequests = promauto.NewCounterVec(
 	prometheus.CounterOpts{
-		Name: "cache_requests_total",
-		Help: "Total number of cache requests labeled by result",
+		Name: "redirect_cache_hits_total",
+		Help: "Number of cache hits and misses for URL redirection",
 	},
 	[]string{"result"}, // result = "hit" or "miss"
 )

@@ -1,0 +1,14 @@
+root = "."
+tmp_dir = "tmp"
+
+[build]
+  cmd = "go build -o ./tmp/main ."
+  bin = "tmp/main"
+  include_ext = ["go"]
+  exclude_dir = ["tmp", "postgres", "migrations", "prometheus"]
+  exclude_file = []
+  delay = 1000  # milliseconds
+  follow_symlink = true
+
+[log]
+  time = true

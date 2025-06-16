@@ -1,0 +1,14 @@
+services:
+  app:
+    build:
+      dockerfile: Dockerfile.dev
+      context: .
+    deploy:
+      replicas: 1
+    ports:
+        - "8080:8080"
+    depends_on:
+      - postgres
+      - redis
+    volumes:
+      - ./:/app

@@ -7,22 +7,51 @@ A simple and efficient URL management project.
 - Fast and lightweight
 - Built with Go 🐹
 - Postgres for storage
-- Hot URL caching with Redis
+- Redis to cache hot URLs
+- Prometheus/Grafana for monitoring
 
-## Getting Started 🏁
 
+## Running in Development 🛠️
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/urls-ac.git
+   git clone git@github.com:cweiser22/urls-ac.git
    ```
-2. Change into the project directory:
+
+2. Run make build-dev:
    ```bash
-   cd urls-ac
+   make build-dev
    ```
-3. Build and run:
+   
+3. Start the application:
    ```bash
-   go run main.go
+    make dev
+    ```
+
+## Simulating Production 🚀
+1. Create direct `./ssl`
+
+2. Generate fake certs in `./ssl'`:
+   ```bash
+   openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
+   -keyout privkey.pem \
+   -out fullchain.pem \
+   -subj "/CN=localhost" \
+   -addext "subjectAltName=DNS:localhost"
    ```
+   
+3. Build the application:
+   ```bash
+   make build-prod
+   ```
+   
+4. Start the application:
+   ```bash
+    make prod
+    ```
+   
+   
+
+
 
 ## Contributing 🤝
 

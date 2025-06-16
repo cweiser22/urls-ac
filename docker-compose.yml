@@ -1,6 +1,30 @@
 version: '3.8'
 
 services:
+  app:
+    build: .
+    deploy:
+      replicas: 5
+    networks:
+      - urls-ac-network
+    depends_on:
+      - postgres
+      - redis
+
+  nginx:
+    image: nginx:latest
+    ports:
+        - "80:80"
+        - "443:443"
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+      - ./ssl:/etc/ssl
+    networks:
+      - urls-ac-network
+    depends_on:
+      - app
+
+
   postgres:
     image: postgres:latest
     environment:
@@ -12,10 +36,16 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
+    networks:
+      - urls-ac-network
+
   redis:
     image: redis:latest
     ports:
       - "6479:6379"
+
+    networks:
+      - urls-ac-network
 
   prometheus:
     image: prom/prometheus
@@ -23,11 +53,28 @@ services:
       - "9090:9090"
     volumes:
         - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+    networks:
+      - urls-ac-network
+    depends_on:
+      - app
 
   grafana:
     image: grafana/grafana
     ports:
       - "3000:3000"
+    volumes:
+      - grafana-storage:/var/lib/grafana
+    networks:
+      - urls-ac-network
+    depends_on:
+      - prometheus
+
+
 
 volumes:
     postgres_data:
+    grafana-storage:
+
+networks:
+  urls-ac-network:
+    driver: bridge
