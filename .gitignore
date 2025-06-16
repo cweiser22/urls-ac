@@ -12,6 +12,8 @@
 *.so
 *.dylib
 
+.env
+
 tmp
 ssl
 terraform
