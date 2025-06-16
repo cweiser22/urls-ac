@@ -1,10 +1,11 @@
 package main
 
 import (
-	"github.com/cweiser22/urls-ac/db"
-	"github.com/cweiser22/urls-ac/handlers"
-	"github.com/cweiser22/urls-ac/metrics"
-	"github.com/cweiser22/urls-ac/service"
+	"github.com/cweiser22/urls-ac/internal/config"
+	"github.com/cweiser22/urls-ac/internal/db"
+	"github.com/cweiser22/urls-ac/internal/handlers"
+	"github.com/cweiser22/urls-ac/internal/metrics"
+	"github.com/cweiser22/urls-ac/internal/service"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
@@ -13,17 +14,7 @@ import (
 )
 
 func main() {
-	viper.AutomaticEnv()
-
-	viper.BindEnv("postgres_connection_string", "POSTGRES_CONNECTION_STRING")
-	viper.BindEnv("redis_connection_string", "REDIS_CONNECTION_STRING")
-	viper.BindEnv("port", "PORT")
-	viper.BindEnv("environment", "ENVIRONMENT")
-
-	viper.SetDefault("postgres_connection_string", "postgres://postgres:postgres@postgres:5432/url_shortener?sslmode=disable")
-	viper.SetDefault("redis_connection_string", "redis:6379")
-	viper.SetDefault("port", "8080")
-	viper.SetDefault("environment", "dev")
+	config.Init()
 
 	postgresConnectionString := viper.GetString("postgres_connection_string")
 	redisConnectionString := viper.GetString("redis_connection_string")
@@ -40,7 +31,7 @@ func main() {
 		panic(err)
 	}
 
-	shortCodeService := service.NewShortCodeService(DB, redisClient, metrics.CacheRequests)
+	shortCodeService := service.NewShortCodeService(DB, redisClient, metrics.CacheRequestsTotal)
 
 	indexHandler := handlers.NewIndexHandler()
 	healthCheckHandler := handlers.NewHealthCheckHandler()
@@ -48,14 +39,11 @@ func main() {
 
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)
-
-	r.Get("/", indexHandler.IndexHandler)
-
+	r.Handle("/api/v1/metrics", promhttp.Handler())
+	r.Get("/", indexHandler.AppHandler)
 	r.Get("/{shortCode}", urlHandler.RedirectFromMapping)
 	r.Get("/api/v1/health", healthCheckHandler.HealthCheckHandler)
 	r.Post("/api/v1/mappings", urlHandler.CreateShortURL)
-
-	r.Handle("/api/v1/metrics", promhttp.Handler())
 
 	err = http.ListenAndServe(":8080", r)
 	if err != nil {

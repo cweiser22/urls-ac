@@ -2,18 +2,27 @@ package handlers
 
 import (
 	"encoding/json"
-	"github.com/cweiser22/urls-ac/service"
+	"github.com/cweiser22/urls-ac/internal/service"
 	"github.com/go-chi/chi/v5"
+	"github.com/spf13/viper"
+	"log/slog"
 	"net/http"
 )
 
 type URLHandler struct {
 	ShortCodeService *service.ShortCodeService
+	RedirectProtocol string
 }
 
 func NewURLHandler(service *service.ShortCodeService) *URLHandler {
+	environment := viper.GetString("environment")
+	redirectProtocol := "http://"
+	if environment == "production" {
+		redirectProtocol = "https://"
+	}
 	return &URLHandler{
 		ShortCodeService: service,
+		RedirectProtocol: redirectProtocol,
 	}
 }
 
@@ -39,6 +48,10 @@ type CreateShortURLRequest struct {
 	LongURL string `json:"longUrl"`
 }
 
+type CreateShortURLResponse struct {
+	ShortURL string `json:"shortUrl"`
+}
+
 func (h *URLHandler) CreateShortURL(w http.ResponseWriter, r *http.Request) {
 
 	// Parse the request body to get the long URL
@@ -60,9 +73,21 @@ func (h *URLHandler) CreateShortURL(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	host := viper.GetString("host")
+	if host == "" {
+		http.Error(w, "Internal Server Error: Host not configured", http.StatusInternalServerError)
+		return
+	}
+
+	slog.Info(h.RedirectProtocol)
+
+	responseBody := CreateShortURLResponse{
+		ShortURL: h.RedirectProtocol + host + "/" + mapping.ShortCode,
+	}
+
 	// Respond with the short URL
 	w.Header().Set("Content-Type", "application/json")
-	err = json.NewEncoder(w).Encode(mapping)
+	err = json.NewEncoder(w).Encode(responseBody)
 	if err != nil {
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return

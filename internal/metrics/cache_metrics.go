@@ -5,7 +5,7 @@ import (
 	"github.com/prometheus/client_golang/prometheus/promauto"
 )
 
-var CacheRequests = promauto.NewCounterVec(
+var CacheRequestsTotal = promauto.NewCounterVec(
 	prometheus.CounterOpts{
 		Name: "redirect_cache_hits_total",
 		Help: "Number of cache hits and misses for URL redirection",

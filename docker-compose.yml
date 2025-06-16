@@ -64,6 +64,8 @@ services:
       - "3000:3000"
     volumes:
       - grafana-storage:/var/lib/grafana
+      - ./grafana/grafana.ini:/etc/grafana/grafana.ini
+      - ./grafana/dashboards:/var/lib/grafana/dashboards
     networks:
       - urls-ac-network
     depends_on:

@@ -1,7 +1,7 @@
 package service
 
 import (
-	"github.com/cweiser22/urls-ac/testsupport"
+	"github.com/cweiser22/urls-ac/internal/testsupport"
 	"testing"
 )
 

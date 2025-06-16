@@ -12,3 +12,7 @@ services:
       - redis
     volumes:
       - ./:/app
+    environment:
+      - HOST=localhost:8080
+      - ENVIRONMENT=development
+
