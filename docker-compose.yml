@@ -4,7 +4,7 @@ services:
   app:
     build: .
     deploy:
-      replicas: 5
+      replicas: 3
     networks:
       - urls-ac-network
     depends_on:
