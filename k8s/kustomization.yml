@@ -1,3 +1,7 @@
 resources:
   - app-deployment.yml
   - app-service.yml
+
+images:
+  - name: us-west1-docker.pkg.dev/urls-ac/urls-ac-container-registry/app
+    newTag: latest
