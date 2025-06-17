@@ -5,7 +5,7 @@ import (
 	"crypto/sha256"
 	"errors"
 	"fmt"
-	"github.com/cweiser22/urls-ac/internal/models"
+	"github.com/cweiser22/urls-ac/app/internal/models"
 	"github.com/jmoiron/sqlx"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/redis/go-redis/v9"

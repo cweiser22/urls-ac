@@ -28,15 +28,16 @@ A simple and efficient URL management project.
     ```
 
 ## Simulating Production 🚀
-1. Create direct `./ssl`
+1. Create directory `./ssl`:
+```bash
+mkdir ssl 
+```
 
-2. Generate fake certs in `./ssl'`:
+2. Get real SSL certs and place them in `./ssl'`, or generate self-signed certificates with OpenSSL:
    ```bash
-   openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
-   -keyout privkey.pem \
-   -out fullchain.pem \
-   -subj "/CN=localhost" \
-   -addext "subjectAltName=DNS:localhost"
+   openssl ecparam -genkey -name prime256v1 -out url_ac_ecdsa.key
+   openssl x509 -in url_ac_ecdsa.crt -text -noout
+
    ```
    
 3. Build the application:

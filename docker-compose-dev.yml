@@ -2,7 +2,7 @@ services:
   app:
     build:
       dockerfile: Dockerfile.dev
-      context: .
+      context: ./app
     deploy:
       replicas: 1
     ports:

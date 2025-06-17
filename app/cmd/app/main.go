@@ -1,11 +1,11 @@
 package main
 
 import (
-	"github.com/cweiser22/urls-ac/internal/config"
-	"github.com/cweiser22/urls-ac/internal/db"
-	"github.com/cweiser22/urls-ac/internal/handlers"
-	"github.com/cweiser22/urls-ac/internal/metrics"
-	"github.com/cweiser22/urls-ac/internal/service"
+	"github.com/cweiser22/urls-ac/app/internal/config"
+	db2 "github.com/cweiser22/urls-ac/app/internal/db"
+	handlers2 "github.com/cweiser22/urls-ac/app/internal/handlers"
+	"github.com/cweiser22/urls-ac/app/internal/metrics"
+	"github.com/cweiser22/urls-ac/app/internal/service"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
@@ -19,23 +19,23 @@ func main() {
 	postgresConnectionString := viper.GetString("postgres_connection_string")
 	redisConnectionString := viper.GetString("redis_connection_string")
 
-	DB, err := db.NewPostgresDB(postgresConnectionString)
+	DB, err := db2.NewPostgresDB(postgresConnectionString)
 	if err != nil {
 		panic(err)
 	}
 
 	// Initialize the Redis client
 	// Assuming Redis is running on localhost:6479
-	redisClient, err := db.NewRedisClient(redisConnectionString)
+	redisClient, err := db2.NewRedisClient(redisConnectionString)
 	if err != nil {
 		panic(err)
 	}
 
 	shortCodeService := service.NewShortCodeService(DB, redisClient, metrics.CacheRequestsTotal)
 
-	indexHandler := handlers.NewIndexHandler()
-	healthCheckHandler := handlers.NewHealthCheckHandler()
-	urlHandler := handlers.NewURLHandler(shortCodeService)
+	indexHandler := handlers2.NewIndexHandler()
+	healthCheckHandler := handlers2.NewHealthCheckHandler()
+	urlHandler := handlers2.NewURLHandler(shortCodeService)
 
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)
