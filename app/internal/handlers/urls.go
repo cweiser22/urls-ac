@@ -2,9 +2,10 @@ package handlers
 
 import (
 	"encoding/json"
-	"github.com/cweiser22/urls-ac/app/internal/service"
+	"github.com/cweiser22/urls-ac/internal/service"
 	"github.com/go-chi/chi/v5"
 	"github.com/spf13/viper"
+
 	"log/slog"
 	"net/http"
 )
