@@ -48,7 +48,7 @@ env:
   DEPLOYMENT_NAME: 'urls-ac-staging-deployment' # TODO: update to your deployment name
   REPOSITORY: 'urls-ac-container-registry' # TODO: update to your Artifact Registry docker repository name
   IMAGE: 'app'
-  WORKLOAD_IDENTITY_PROVIDER: 'projects/315102483322/locations/global/workloadIdentityPools/urls-ac-gke-deploy/providers/github-actions-provider' # TODO: update to your workload identity provider
+  WORKLOAD_IDENTITY_PROVIDER: 'projects/315102483322/locations/global/workloadIdentityPools/github/providers/my-repo' # TODO: update to your workload identity provider
 
 jobs:
   setup-build-publish-deploy:
@@ -73,7 +73,6 @@ jobs:
         uses: 'google-github-actions/auth@f112390a2df9932162083945e46d439060d66ec2' # google-github-actions/auth@v2
         with:
           workload_identity_provider: '${{ env.WORKLOAD_IDENTITY_PROVIDER }}'
-          service_account: 'github-deploy-gke@urls-ac.iam.gserviceaccount.com'
 
       # Authenticate Docker to Google Cloud Artifact Registry
       - name: 'Manual Docker Login with Access Token'
