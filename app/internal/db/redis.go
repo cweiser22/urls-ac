@@ -9,12 +9,14 @@ import (
 var ctx = context.Background()
 
 func NewRedisClient(redisURL string) (*redis.Client, error) {
-	client := redis.NewClient(&redis.Options{
-		Addr: redisURL,
-	})
+	opt, err := redis.ParseURL(redisURL)
+	if err != nil {
+		panic(err)
+	}
+	client := redis.NewClient(opt)
 
 	// Test the connection
-	_, err := client.Ping(ctx).Result()
+	_, err = client.Ping(ctx).Result()
 	if err != nil {
 		return nil, err
 	}
