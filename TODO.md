@@ -17,3 +17,14 @@
   REPOSITORY: 'urls-ac-container-registry' # TODO: update to your Artifact Registry docker repository name
   IMAGE: 'app'
   WORKLOAD_IDENTITY_PROVIDER: 'projects/315102483322/locations/global/workloadIdentityPools/urls-ac-gke-deploy/providers/github-actions-provider' # TODO: update to your workload identity provider
+
+
+gcloud projects add-iam-policy-binding urls-ac \
+--role="roles/artifactregistry.writer" \
+--member="principalSet://iam.googleapis.com/projects/315102483322/locations/global/workloadIdentityPools/github/attribute.repository/cweiser22/urls-ac"
+
+
+gcloud projects add-iam-policy-binding urls-ac \
+--role="roles/container.admin" \
+--member="principalSet://iam.googleapis.com/projects/315102483322/locations/global/workloadIdentityPools/github/attribute.repository/cweiser22/urls-ac"
+
