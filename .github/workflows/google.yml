@@ -75,6 +75,7 @@ jobs:
         with:
           project_id: 'urls-ac'
           workload_identity_provider: '${{ env.WORKLOAD_IDENTITY_PROVIDER }}'
+          service_account: 'github-deploy-gke@urls-ac.iam.gserviceaccount.com'
 
       # Authenticate Docker to Google Cloud Artifact Registry
       - name: 'Docker Auth'
