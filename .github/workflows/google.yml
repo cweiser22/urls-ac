@@ -75,7 +75,7 @@ jobs:
         with:
           project_id: 'urls-ac'
           workload_identity_provider: '${{ env.WORKLOAD_IDENTITY_PROVIDER }}'
-          #service_account: 'github-deploy-gke@urls-ac.iam.gserviceaccount.com'
+          service_account: 'github-deploy-gke@urls-ac.iam.gserviceaccount.com'
 
       # Authenticate Docker to Google Cloud Artifact Registry
       - name: 'Docker Auth'
@@ -85,6 +85,8 @@ jobs:
           password: '${{ steps.auth.outputs.auth_token }}'
           registry: '${{ env.GAR_LOCATION }}-docker.pkg.dev'
 
+      - name: 'Confirm Docker login'
+        run: docker info
 
       # Get the GKE credentials so we can deploy to the cluster
       - name: 'Set up GKE credentials'
@@ -104,7 +106,7 @@ jobs:
             --build-arg GITHUB_REF="${GITHUB_REF}" \
             ./app
 
-          # docker push "${DOCKER_TAG}"
+          docker push "${DOCKER_TAG}"
 
       # Set up kustomize
       - name: 'Set up Kustomize'
