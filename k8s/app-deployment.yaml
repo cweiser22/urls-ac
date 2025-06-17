@@ -1,9 +1,11 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: app
+  name: app-deployment
+  labels:
+    app: app
 spec:
-  replicas: 3
+  replicas: 2
   selector:
     matchLabels:
       app: app
@@ -14,4 +16,6 @@ spec:
     spec:
       containers:
         - name: app
-          image: app:latest
+          image: us-west1-docker.pkg.dev/urls-ac/urls-ac-container-registry/app:latest  # update with your actual image
+          ports:
+            - containerPort: 8080
