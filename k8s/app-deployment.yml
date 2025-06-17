@@ -17,7 +17,7 @@ spec:
       containers:
         - name: app
           imagePullPolicy: Always
-          image: us-west1-docker.pkg.dev/urls-ac/urls-ac-container-registry/app:latest  # update with your actual image
+          image: LOCATION-docker.pkg.dev/PROJECT_ID/REPOSITORY/IMAGE:TAG # update with your actual image
           ports:
             - containerPort: 8080
           env:
