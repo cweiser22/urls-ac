@@ -19,3 +19,18 @@ spec:
           image: us-west1-docker.pkg.dev/urls-ac/urls-ac-container-registry/app:latest  # update with your actual image
           ports:
             - containerPort: 8080
+          env:
+            - name: POSTGRES_CONNECTION_STRING
+              valueFrom:
+                secretKeyRef:
+                  name: db-secret
+                  key: POSTGRES_CONNECTION_STRING
+            - name: REDIS_CONNECTION_STRING
+              valueFrom:
+                secretKeyRef:
+                  name: redis-secret
+                  key: REDIS_CONNECTION_STRING
+            - name: HOST
+              value: "urls.ac"
+            - name: ENVIRONMENT
+              value: "production"
