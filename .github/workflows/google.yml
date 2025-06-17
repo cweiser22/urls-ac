@@ -46,7 +46,7 @@ env:
   DEPLOYMENT_NAME: 'urls-ac-staging-deployment' # TODO: update to your deployment name
   REPOSITORY: 'urls-ac-container-registry' # TODO: update to your Artifact Registry docker repository name
   IMAGE: 'app'
-  WORKLOAD_IDENTITY_PROVIDER: 'projects/123456789/locations/global/workloadIdentityPools/my-pool/providers/my-provider' # TODO: update to your workload identity provider
+  WORKLOAD_IDENTITY_PROVIDER: 'urls-ac-gke-deploy' # TODO: update to your workload identity provider
 
 jobs:
   setup-build-publish-deploy:
@@ -96,7 +96,7 @@ jobs:
             --tag "${DOCKER_TAG}" \
             --build-arg GITHUB_SHA="${GITHUB_SHA}" \
             --build-arg GITHUB_REF="${GITHUB_REF}" \
-            .
+            ./app
 
           docker push "${DOCKER_TAG}"
 
