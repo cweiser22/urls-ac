@@ -45,7 +45,7 @@ env:
   GAR_LOCATION: 'us-west1' # TODO: update to your region
   GKE_CLUSTER: 'urls-ac-cluster-1' # TODO: update to your cluster name
   GKE_ZONE: 'us-west1' # TODO: update to your cluster zone
-  DEPLOYMENT_NAME: 'urls-ac-staging-deployment' # TODO: update to your deployment name
+  DEPLOYMENT_NAME: 'app-deployment' # TODO: update to your deployment name
   REPOSITORY: 'urls-ac-container-registry' # TODO: update to your Artifact Registry docker repository name
   IMAGE: 'app'
   WORKLOAD_IDENTITY_PROVIDER: 'projects/315102483322/locations/global/workloadIdentityPools/github/providers/my-repo' # TODO: update to your workload identity provider
@@ -53,7 +53,7 @@ env:
 jobs:
   setup-build-publish-deploy:
     name: 'Setup, Build, Publish, and Deploy'
-    runs-on: 'ubuntu-latest'
+    runs-on: 'GCP'
     environment: 'production'
 
     permissions:
@@ -112,11 +112,11 @@ jobs:
           chmod u+x ./kustomize
 
       # Deploy the Docker image to the GKE cluster kubectl get services -o wide
-      #- name: 'Deploy to GKE'
-      #  run: |-
-      #    # replacing the image name in the k8s template
-      #    cd ./k8s
-      #    ../kustomize edit set image LOCATION-docker.pkg.dev/PROJECT_ID/REPOSITORY/IMAGE:TAG=$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/$IMAGE:$GITHUB_SHA
-      #    ../kustomize build . | kubectl apply -f -
-      #    kubectl rollout status deployment/$DEPLOYMENT_NAME
+      - name: 'Deploy to GKE'
+        run: |-
+          # replacing the image name in the k8s template
+          cd ./k8s
+          ../kustomize edit set image LOCATION-docker.pkg.dev/PROJECT_ID/REPOSITORY/IMAGE:TAG=$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/$IMAGE:$GITHUB_SHA
+          ../kustomize build . | kubectl apply -f -
+          kubectl rollout status deployment/$DEPLOYMENT_NAME
           
