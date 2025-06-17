@@ -48,6 +48,8 @@ env:
   IMAGE: 'app'
   WORKLOAD_IDENTITY_PROVIDER: 'urls-ac-gke-deploy' # TODO: update to your workload identity provider
 
+
+
 jobs:
   setup-build-publish-deploy:
     name: 'Setup, Build, Publish, and Deploy'
