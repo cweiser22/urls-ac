@@ -76,6 +76,7 @@ jobs:
           project_id: 'urls-ac'
           workload_identity_provider: '${{ env.WORKLOAD_IDENTITY_PROVIDER }}'
           service_account: 'github-deploy-gke@urls-ac.iam.gserviceaccount.com'
+          token_format: 'access_token'
 
       # Authenticate Docker to Google Cloud Artifact Registry
       - name: 'Docker Auth'
@@ -99,7 +100,7 @@ jobs:
       - name: 'Build and push Docker container'
         run: |-
           DOCKER_TAG="${GAR_LOCATION}-docker.pkg.dev/${PROJECT_ID}/${REPOSITORY}/${IMAGE}:${GITHUB_SHA}"
-        
+          echo "${{ steps.auth.outputs.auth_token }}" | docker login -u oauth2accesstoken --password-stdin us-west1-docker.pkg.dev
           docker build \
             --tag "${DOCKER_TAG}" \
             --build-arg GITHUB_SHA="${GITHUB_SHA}" \
