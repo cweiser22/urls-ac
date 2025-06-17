@@ -75,7 +75,7 @@ jobs:
         with:
           project_id: 'urls-ac'
           workload_identity_provider: '${{ env.WORKLOAD_IDENTITY_PROVIDER }}'
-          service_account: 'github-deploy-gke@urls-ac.iam.gserviceaccount.com'
+          #service_account: 'github-deploy-gke@urls-ac.iam.gserviceaccount.com'
 
       # Authenticate Docker to Google Cloud Artifact Registry
       - name: 'Docker Auth'
@@ -97,16 +97,14 @@ jobs:
       - name: 'Build and push Docker container'
         run: |-
           DOCKER_TAG="${GAR_LOCATION}-docker.pkg.dev/${PROJECT_ID}/${REPOSITORY}/${IMAGE}:${GITHUB_SHA}"
-          
-          cd app
+        
           docker build \
             --tag "${DOCKER_TAG}" \
             --build-arg GITHUB_SHA="${GITHUB_SHA}" \
             --build-arg GITHUB_REF="${GITHUB_REF}" \
-            .
-          cd ..
-          
-          docker push "${DOCKER_TAG}"
+            ./app
+
+          # docker push "${DOCKER_TAG}"
 
       # Set up kustomize
       - name: 'Set up Kustomize'
