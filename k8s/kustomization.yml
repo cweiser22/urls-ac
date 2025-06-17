@@ -1,0 +1,3 @@
+resources:
+  - app-deployment.yml
+  - app-service.yml
