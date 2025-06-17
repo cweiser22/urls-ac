@@ -43,7 +43,7 @@ env:
   PROJECT_ID: 'urls-ac' # TODO: update to your Google Cloud project ID
   GAR_LOCATION: 'us-west1' # TODO: update to your region
   GKE_CLUSTER: 'urls-ac-cluster-1' # TODO: update to your cluster name
-  GKE_ZONE: 'us-west1-c' # TODO: update to your cluster zone
+  GKE_ZONE: 'us-west1' # TODO: update to your cluster zone
   DEPLOYMENT_NAME: 'urls-ac-staging-deployment' # TODO: update to your deployment name
   REPOSITORY: 'urls-ac-container-registry' # TODO: update to your Artifact Registry docker repository name
   IMAGE: 'app'
