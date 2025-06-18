@@ -35,10 +35,6 @@ name: 'Build and Deploy to GKE'
 
 on:
   workflow_dispatch: # Allows manual triggering of the workflow
-  push:
-    branches:
-      - '"main"'
-
 
 env:
   PROJECT_ID: 'urls-ac' # TODO: update to your Google Cloud project ID
