@@ -34,7 +34,6 @@ services:
       - "5532:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
-
     networks:
       - urls-ac-network
 
