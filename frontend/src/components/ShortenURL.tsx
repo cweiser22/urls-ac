@@ -4,6 +4,8 @@ import {Button} from "@/components/ui/button.tsx";
 import {toast} from "sonner";
 import {useState} from "react";
 
+const apiBase = import.meta.env.VITE_API_HOST || 'http://localhost:8080';
+
 interface Props{
     updateResult: (longUrl: string, shortUrl: string) => void;
 }
@@ -15,7 +17,7 @@ export function ShortenURL({updateResult}: Props) {
         // Logic to shorten the URL will go here
         try {
             toast.success('Successfully shortened URL!');
-            const response = await fetch('http://localhost:8080/api/v1/mappings', {
+            const response = await fetch(`${apiBase}/api/v1/mappings`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',

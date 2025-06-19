@@ -15,3 +15,6 @@ clean:
 
 test:
 	sudo docker compose -f docker-compose.yml -f docker-compose-dev.yml run --rm app go test -v ./...
+
+build-frontend:
+	cd frontend && npm install && npm run build && cd ..
