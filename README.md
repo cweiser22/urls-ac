@@ -9,6 +9,10 @@ A simple and efficient URL management project.
 - Postgres for storage
 - Redis to cache hot URLs
 - Prometheus/Grafana for monitoring
+- Kubernetes deployment ready
+- TLS
+- DB migrations with `go-migrate`
+
 
 
 ## Running in Development 🛠️

@@ -12,3 +12,6 @@ build-dev:
 
 clean:
 	sudo docker compose -f docker-compose.yml -f docker-compose-dev.yml down --remove-orphans
+
+test:
+	sudo docker compose -f docker-compose.yml -f docker-compose-dev.yml run --rm app go test -v ./...

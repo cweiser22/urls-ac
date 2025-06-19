@@ -11,7 +11,7 @@ services:
       - postgres
       - redis
     volumes:
-      - ./:/app
+      - ./app:/app
     environment:
       - HOST=localhost:8080
       - ENVIRONMENT=development
