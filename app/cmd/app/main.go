@@ -8,16 +8,34 @@ import (
 	"github.com/cweiser22/urls-ac/internal/service"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+	"github.com/go-chi/cors"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/spf13/viper"
 
 	"net/http"
 )
 
+func withCORS(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Access-Control-Allow-Origin", "http://localhost:5173")
+		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
+		w.Header().Set("Access-Control-Allow-Credentials", "true")
+
+		if r.Method == http.MethodOptions {
+			w.WriteHeader(http.StatusNoContent)
+			return
+		}
+
+		next.ServeHTTP(w, r)
+	})
+}
+
 func main() {
 	config.Init()
 	postgresConnectionString := viper.GetString("postgres_connection_string")
 	redisConnectionString := viper.GetString("redis_connection_string")
+	environment := viper.GetString("environment")
 
 	DB, err := db.NewPostgresDB(postgresConnectionString)
 	if err != nil {
@@ -39,6 +57,22 @@ func main() {
 
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)
+
+	corsOptions := cors.Options{
+		AllowedOrigins:   []string{"https://*", "http://*"},
+		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token"},
+		ExposedHeaders:   []string{"Link"},
+		AllowCredentials: false,
+		MaxAge:           300, // Maximum value not ignored by any of major browsers
+	}
+
+	if environment == "production" {
+		corsOptions.AllowedOrigins = []string{"https://urls.ac"}
+	}
+
+	r.Use(cors.Handler(corsOptions))
+
 	r.Handle("/api/v1/metrics", promhttp.Handler())
 	r.Get("/", indexHandler.AppHandler)
 	r.Get("/{shortCode}", urlHandler.RedirectFromMapping)
