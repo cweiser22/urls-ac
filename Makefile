@@ -1,5 +1,5 @@
 dev:
-	sudo docker compose -f docker-compose.yml -f docker-compose-dev.yml up app prometheus grafana
+	sudo docker compose -f docker-compose.yml -f docker-compose-dev.yml up app prometheus grafana postgres redis
 
 build-prod:
 	sudo docker compose -f docker-compose.yml build

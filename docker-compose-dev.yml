@@ -16,3 +16,6 @@ services:
       - HOST=localhost:8080
       - ENVIRONMENT=development
 
+  postgres:
+    ports:
+      - "5433:5432"

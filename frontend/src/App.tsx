@@ -26,7 +26,7 @@ function App() {
                 <ShortenURL updateResult={updateResult}/>
                   {result && <ShortenLink longURL={result.longUrl} shortURL={result.shortUrl} />}
               </div>
-              <div className={"h-48"}/>
+
           </div>
 
       </MainLayout>
