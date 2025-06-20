@@ -43,7 +43,7 @@ func startPostgresContainer(ctx context.Context) (*TestPostgres, error) {
 		postgres.WithDatabase("testdb"),
 		postgres.WithUsername("testuser"),
 		postgres.WithPassword("testpass"),
-		postgres.WithInitScripts("../postgres/test_db_init.sql"),
+		postgres.WithInitScripts("../../../postgres/test_db_init.sql"),
 	)
 	if err != nil {
 		return nil, fmt.Errorf("failed to start container: %w", err)

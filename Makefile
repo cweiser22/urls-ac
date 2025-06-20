@@ -14,8 +14,10 @@ clean:
 	sudo docker compose -f docker-compose.yml -f docker-compose-dev.yml down --remove-orphans
 
 test:
-	sudo docker compose -f docker-compose.yml -f docker-compose-dev.yml run --rm app go test -v ./...
+	cd app && go test -v ./...
 
 build-frontend:
 	cd frontend && npm install && npm run build && cd ..
 
+make migrate-up:
+	migrate -database "postgresql://postgres:postgres@localhost:5433/url_shortener?sslmode=disable" -source file://./migrations up

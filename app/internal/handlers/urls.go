@@ -11,11 +11,11 @@ import (
 )
 
 type URLHandler struct {
-	ShortCodeService *service.ShortCodeService
+	ShortCodeService *service.ShortenService
 	RedirectProtocol string
 }
 
-func NewURLHandler(service *service.ShortCodeService) *URLHandler {
+func NewURLHandler(service *service.ShortenService) *URLHandler {
 	environment := viper.GetString("environment")
 	redirectProtocol := "http://"
 	if environment == "production" {

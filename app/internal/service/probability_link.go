@@ -22,5 +22,5 @@ func (p *ProbabilityLinkService) GetProbabilityLink(shortCode string) (string, e
 }
 
 func (p *ProbabilityLinkService) CreateProbabilityLink(link_a string, link_b, probability float64) (string, error) {
-
+	return "", nil
 }

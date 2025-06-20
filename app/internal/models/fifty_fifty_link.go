@@ -1,6 +1,6 @@
 package models
 
-type ProbabilityLink struct {
+type FiftyFiftyLink struct {
 	ID          int     `db:"id" json:"id"`
 	Probability float64 `db:"probability" json:"probability"`
 	URLa        string  `db:"url_a" json:"urlA"`
