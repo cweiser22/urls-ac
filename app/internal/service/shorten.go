@@ -17,7 +17,7 @@ type ShortenService struct {
 	urlMappingRepository *repository.URLMappingsRepository
 }
 
-func NewShortCodeService(urlMappingCache *cache.URLMappingCache, cacheMetrics *prometheus.CounterVec, urlMappingRepository *repository.URLMappingsRepository) *ShortenService {
+func NewShortenService(urlMappingCache *cache.URLMappingCache, cacheMetrics *prometheus.CounterVec, urlMappingRepository *repository.URLMappingsRepository) *ShortenService {
 	return &ShortenService{
 		CacheMetrics:         cacheMetrics,
 		URLMappingCache:      urlMappingCache,

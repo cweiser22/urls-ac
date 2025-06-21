@@ -12,6 +12,10 @@ const base62Alphabet = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrst
 type ShortCodeService struct {
 }
 
+func NewShortCodeService() *ShortCodeService {
+	return &ShortCodeService{}
+}
+
 // base62Encode encodes a byte slice into a base62 string
 func base62Encode(data []byte) string {
 	num := new(big.Int).SetBytes(data)

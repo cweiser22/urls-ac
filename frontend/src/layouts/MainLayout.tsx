@@ -7,15 +7,21 @@ export function MainLayout({ children }: { children: ReactNode }) {
         <div className="min-h-screen flex flex-col w-full">
             <header className="w-full border-b px-4">
                 <div className="container mx-auto py-4 flex items-center justify-between">
+                    <div className={"flex flex-row items-center space-x-4 justify-center"}>
                     <Link to={"/"}><h1 className="text-lg font-semibold">Urls.ac</h1></Link>
+                        <nav className="space-x-4 text-sm md:block hidden">
+                            <Link to={"/"} className="hover:underline">Shorten</Link>
+                            <Link to={"/fiftyfifty"} className="hover:underline">FiftyFifty</Link>
+                        </nav>
+                    </div>
                     <nav className="space-x-4 text-sm md:block hidden">
-                        <Link to={"/login"} className="hover:underline">Log In</Link>
-                        <Link to={"/signup"} className="hover:underline">Sign up</Link>
+                        {/*<Link to={"/login"} className="hover:underline">Log In</Link>
+                        <Link to={"/signup"} className="hover:underline">Sign up</Link>*/}
                     </nav>
                 </div>
             </header>
 
-            <main className="flex-1 items-center justify-center flex flex-col p-4">
+            <main className="flex-1 items-center justify-center lg:justify-start flex flex-col p-4">
 
                     {children}
 
