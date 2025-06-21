@@ -1,10 +1,12 @@
 package main
 
 import (
+	"github.com/cweiser22/urls-ac/internal/cache"
 	"github.com/cweiser22/urls-ac/internal/config"
 	"github.com/cweiser22/urls-ac/internal/db"
 	"github.com/cweiser22/urls-ac/internal/handlers"
 	"github.com/cweiser22/urls-ac/internal/metrics"
+	"github.com/cweiser22/urls-ac/internal/repository"
 	"github.com/cweiser22/urls-ac/internal/service"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
@@ -49,7 +51,10 @@ func main() {
 		panic(err)
 	}
 
-	shortCodeService := service.NewShortCodeService(DB, redisClient, metrics.CacheRequestsTotal)
+	urlMappingCache := cache.NewURLMappingCache(redisClient)
+	urlMappingRepository := repository.URLMappingsRepository{DB: DB}
+
+	shortCodeService := service.NewShortCodeService(urlMappingCache, metrics.CacheRequestsTotal, &urlMappingRepository)
 
 	indexHandler := handlers.NewIndexHandler()
 	healthCheckHandler := handlers.NewHealthCheckHandler()

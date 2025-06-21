@@ -6,7 +6,6 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/spf13/viper"
 
-	"log/slog"
 	"net/http"
 )
 
@@ -68,7 +67,7 @@ func (h *URLHandler) CreateShortURL(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Create a new short URL mapping
-	mapping, err := h.ShortCodeService.GetOrCreateMapping(requestBody.LongURL)
+	mapping, err := h.ShortCodeService.CreateURLMapping(requestBody.LongURL)
 	if err != nil {
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
@@ -79,8 +78,6 @@ func (h *URLHandler) CreateShortURL(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Internal Server Error: Host not configured", http.StatusInternalServerError)
 		return
 	}
-
-	slog.Info(h.RedirectProtocol)
 
 	responseBody := CreateShortURLResponse{
 		ShortURL: h.RedirectProtocol + host + "/" + mapping.ShortCode,

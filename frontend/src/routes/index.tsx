@@ -8,6 +8,11 @@ export const Route = createFileRoute('/')({
     component: Index,
 })
 
+type Result = {
+    longUrl: string;
+    shortUrl: string;
+}
+
 function Index() {
     const [result, setResult] = useState<Result | null>(null);
 
@@ -15,7 +20,7 @@ function Index() {
         setResult({ longUrl, shortUrl });
         toast.success("Successfully shortened URL!");
     }
-    
+
     return (
         <div className={"container"}>
             <div className={"mx-auto w-full"}>
