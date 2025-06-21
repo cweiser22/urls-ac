@@ -18,7 +18,6 @@ export function CreateFiftyFiftyLink({updateResult}: Props) {
     const [url2Value, setUrl2Value] = useState("");
     const [probability, setProbability] = useState([.5]);
     const [customize, setCustomize] = useState(false);
-    const [error, setError] = useState<string | null>(null);
 
     const handleUrl1Change = (e: React.ChangeEvent<HTMLInputElement>) => {
         setUrl1Value(e.target.value);
@@ -33,7 +32,7 @@ export function CreateFiftyFiftyLink({updateResult}: Props) {
         if (!customize) {
             setProbability([.5]); // Reset to default probability when toggling off
         } else {
-            setProbability([0]); // Set to 0 when toggling on, allowing customization
+            setProbability([.5]); // Set to 0 when toggling on, allowing customization
         }
     }
 
@@ -55,7 +54,6 @@ export function CreateFiftyFiftyLink({updateResult}: Props) {
 
             if (!response.ok) {
                 if (response.status === 400) {
-                    setError("Invalid URL format. Please enter a valid URL.");
                     toast.error("Invalid URL format", {
                         description: "Please enter a valid URL.",
                     });
@@ -70,7 +68,7 @@ export function CreateFiftyFiftyLink({updateResult}: Props) {
             const data = await response.json();
             // Handle success, e.g., show a success message or redirect
             console.log('Fifty-Fifty Link Created:', data);
-            updateResult(url1Value, url2Value, data.shortUrl, probability[0]);
+            updateResult(data.urlA, data.urlB, data.shortUrl, probability[0]);
             setUrl1Value("");
             setUrl2Value("");
             setProbability([.5]); // Reset probability to default
@@ -95,7 +93,7 @@ export function CreateFiftyFiftyLink({updateResult}: Props) {
                     <div className={"flex lg:flex-row flex-col space-y-2 justify-between w-full"}>
                         <div>
                             <Label className={"mb-1 text-indigo-500"} htmlFor="url1">Link 1</Label>
-                            <Input className={"min-w-xs"} name={"url1"} value={url1Value} onChange={handleUrl1Change}
+                            <Input className={"md:min-w-xs"} name={"url1"} value={url1Value} onChange={handleUrl1Change}
                                    type="text" placeholder="URL 1"/>
 
 
@@ -103,7 +101,7 @@ export function CreateFiftyFiftyLink({updateResult}: Props) {
                         <div className={"flex-1 "}></div>
                         <div>
                             <Label className={"mb-1 text-teal-500"} htmlFor="url2">Link 2</Label>
-                            <Input className={"min-w-xs"} name="url2" value={url2Value} onChange={handleUrl2Change}
+                            <Input className={"md:min-w-xs"} name="url2" value={url2Value} onChange={handleUrl2Change}
                                    type="text" placeholder="URL 2"/>
                         </div>
                     </div>
@@ -128,7 +126,7 @@ export function CreateFiftyFiftyLink({updateResult}: Props) {
                     <Button onClick={handleSubmit} type="submit" variant="outline" className={"bg-indigo-500 text-white w-full max-w-sm mt-2"}>
                         Create {Math.round(probability[0] * 100)}/{100 - Math.round(probability[0] * 100)} Link
                     </Button>
-                
+
 
                 </div>
             </CardContent>

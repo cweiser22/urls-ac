@@ -1,9 +1,13 @@
-import type {ReactNode} from "react"
+import {type ReactNode} from "react"
 import {Toaster} from "sonner";
 import {Link} from "@tanstack/react-router";
 import {Footer} from "@/components/Footer.tsx";
+import {Button} from "@/components/ui/button.tsx";
+import { Menu } from "lucide-react"
+import {Drawer, DrawerContent, DrawerTrigger} from "@/components/ui/drawer.tsx";
 
 export function MainLayout({ children }: { children: ReactNode }) {
+
     return (
         <div className="min-h-screen flex flex-col w-full">
             <header className="w-full border-b px-4">
@@ -19,7 +23,28 @@ export function MainLayout({ children }: { children: ReactNode }) {
                         {/*<Link to={"/login"} className="hover:underline">Log In</Link>
                         <Link to={"/signup"} className="hover:underline">Sign up</Link>*/}
                     </nav>
+                    <div className="lg:hidden">
+                        <Drawer direction={"right"}>
+                            <DrawerTrigger asChild>
+                                <Button variant="outline">
+                                    <Menu className="h-5 w-5" />
+                                </Button>
+                            </DrawerTrigger>
+                            <DrawerContent className="p-6">
+                                <ul className="space-y-4">
+                                    <li>
+                                        <Link to={"/"} className="font-semibold">Shorten</Link>
+                                    </li>
+                                    <li>
+                                        <Link to={"/fiftyfifty"} className="font-semibold">FiftyFifty</Link>
+                                    </li>
+                                </ul>
+                            </DrawerContent>
+                        </Drawer>
+                    </div>
                 </div>
+
+
             </header>
 
             <main className="flex-1 items-center justify-center lg:justify-start flex flex-col p-4">
