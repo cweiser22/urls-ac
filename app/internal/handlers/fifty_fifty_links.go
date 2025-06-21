@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/cweiser22/urls-ac/internal/service"
+	"github.com/cweiser22/urls-ac/internal/utils"
 	"github.com/go-chi/chi/v5"
 	"github.com/spf13/viper"
 	"net/http"
@@ -45,15 +46,19 @@ func (h *FiftyFiftyHandler) Create(w http.ResponseWriter, r *http.Request) {
 
 	shortCode := h.shortCodeService.GenerateShortcode(fmt.Sprintf("%f-%s-%s", req.Probability, req.URLa, req.URLb), 6)
 
-	if !((len(req.URLa) > 4 && req.URLa[:4] == "http") || (len(req.URLa) > 5 && req.URLa[:5] == "https")) {
-		req.URLa = "http://" + req.URLa
+	URLa, err := utils.ValidateAndFixURL(req.URLa)
+	if err != nil {
+		http.Error(w, "Invalid URL A: "+err.Error(), http.StatusBadRequest)
+		return
 	}
 
-	if !((len(req.URLb) > 4 && req.URLb[:4] == "http") || (len(req.URLb) > 5 && req.URLb[:5] == "https")) {
-		req.URLb = "http://" + req.URLb
+	URLb, err := utils.ValidateAndFixURL(req.URLb)
+	if err != nil {
+		http.Error(w, "Invalid URL B: "+err.Error(), http.StatusBadRequest)
+		return
 	}
 
-	link, err := h.fiftyFiftyService.Create(req.Probability, req.URLa, req.URLb, shortCode)
+	link, err := h.fiftyFiftyService.Create(req.Probability, URLa, URLb, shortCode)
 	if err != nil {
 		http.Error(w, "Failed to create link: "+err.Error(), http.StatusInternalServerError)
 		return
@@ -67,6 +72,8 @@ func (h *FiftyFiftyHandler) Create(w http.ResponseWriter, r *http.Request) {
 
 	responseBody := CreateShortURLResponse{
 		ShortURL: h.redirectProtocol + host + "/ff/" + link.ShortCode,
+		URLa:     link.URLa,
+		URLb:     link.URLb,
 	}
 
 	// Respond with the short URL

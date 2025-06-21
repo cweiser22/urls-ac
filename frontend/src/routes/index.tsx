@@ -1,6 +1,6 @@
 import {createFileRoute, Link} from '@tanstack/react-router'
 import {ShortenURL} from "@/components/ShortenURL.tsx";
-import {ShortenLink} from "@/components/Result.tsx";
+import {ShortenURLResult} from "@/components/ShortenURLResult.tsx";
 import {useState} from "react";
 import {toast} from "sonner";
 
@@ -26,7 +26,7 @@ function Index() {
             <div className={"grid grid-cols-1 lg:grid-cols-3 gap-4 mx-auto w-full"}>
                 <div className={""}>
                     <ShortenURL updateResult={updateResult}/>
-                    {result && <ShortenLink longURL={result.longUrl} shortURL={result.shortUrl} />}
+                    {result && <ShortenURLResult longURL={result.longUrl} shortURL={result.shortUrl} />}
                 </div>
                 <div className={"col-span-2 space-y-2"}>
                     <h1 className={"text-2xl mb-2 font-bold"}>urls.ac - A Modern URL Shortener</h1>

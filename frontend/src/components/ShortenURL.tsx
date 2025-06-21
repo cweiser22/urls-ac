@@ -12,6 +12,7 @@ interface Props{
 
 export function ShortenURL({updateResult}: Props) {
     const [inputValue, setInputValue] = useState("");
+    const [error, setError] = useState<string | null>(null);
 
     const handleClick = async () => {
         // Logic to shorten the URL will go here
@@ -25,6 +26,20 @@ export function ShortenURL({updateResult}: Props) {
                     body: JSON.stringify({longUrl: inputValue}),
                 }
             );
+
+            if (!response.ok) {
+                if (response.status === 400) {
+                    setError("Invalid URL format. Please enter a valid URL.");
+                    toast.error("Invalid URL format", {
+                        description: "Please enter a valid URL.",
+                    });
+                } else {
+                    toast.error("Failed to shorten URL. Please try again later.", {
+                        description: `Error: ${response.statusText}`,
+                    });
+                }
+            }
+
             const {shortUrl} = await response.json();
             updateResult(inputValue, shortUrl);
             setInputValue("");

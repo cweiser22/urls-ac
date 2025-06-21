@@ -1,6 +1,7 @@
 import type {ReactNode} from "react"
 import {Toaster} from "sonner";
 import {Link} from "@tanstack/react-router";
+import {Footer} from "@/components/Footer.tsx";
 
 export function MainLayout({ children }: { children: ReactNode }) {
     return (
@@ -27,6 +28,7 @@ export function MainLayout({ children }: { children: ReactNode }) {
 
             </main>
             <Toaster />
+            <Footer/>
         </div>
     )
 }

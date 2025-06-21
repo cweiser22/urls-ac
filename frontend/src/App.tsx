@@ -1,6 +1,6 @@
 import {MainLayout} from "@/layouts/MainLayout.tsx";
 import {ShortenURL} from "@/components/ShortenURL.tsx";
-import {ShortenLink} from "@/components/Result.tsx";
+import {ShortenURLResult} from "@/components/ShortenURLResult.tsx";
 import {useState} from "react";
 import {toast} from "sonner";
 
@@ -24,7 +24,7 @@ function App() {
           <div className={"container"}>
               <div className={"mx-auto w-full"}>
                 <ShortenURL updateResult={updateResult}/>
-                  {result && <ShortenLink longURL={result.longUrl} shortURL={result.shortUrl} />}
+                  {result && <ShortenURLResult longURL={result.longUrl} shortURL={result.shortUrl} />}
               </div>
 
           </div>
