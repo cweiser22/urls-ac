@@ -36,6 +36,8 @@ services:
       - postgres_data:/var/lib/postgresql/data
     networks:
       - urls-ac-network
+    ports:
+      - "5433:5432"
 
   redis:
     image: redis:latest

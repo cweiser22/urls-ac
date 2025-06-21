@@ -1,0 +1,1 @@
+ALTER TABLE probability_links RENAME TO fifty_fifty_links;

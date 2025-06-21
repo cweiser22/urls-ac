@@ -1,10 +1,12 @@
 package main
 
 import (
+	"github.com/cweiser22/urls-ac/internal/cache"
 	"github.com/cweiser22/urls-ac/internal/config"
 	"github.com/cweiser22/urls-ac/internal/db"
 	"github.com/cweiser22/urls-ac/internal/handlers"
 	"github.com/cweiser22/urls-ac/internal/metrics"
+	"github.com/cweiser22/urls-ac/internal/repository"
 	"github.com/cweiser22/urls-ac/internal/service"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
@@ -14,22 +16,6 @@ import (
 
 	"net/http"
 )
-
-func withCORS(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Access-Control-Allow-Origin", "http://localhost:5173")
-		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
-		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
-		w.Header().Set("Access-Control-Allow-Credentials", "true")
-
-		if r.Method == http.MethodOptions {
-			w.WriteHeader(http.StatusNoContent)
-			return
-		}
-
-		next.ServeHTTP(w, r)
-	})
-}
 
 func main() {
 	config.Init()
@@ -49,11 +35,19 @@ func main() {
 		panic(err)
 	}
 
-	shortCodeService := service.NewShortCodeService(DB, redisClient, metrics.CacheRequestsTotal)
+	urlMappingCache := cache.NewURLMappingCache(redisClient)
+
+	urlMappingRepository := repository.URLMappingsRepository{DB: DB}
+	fiftyFiftyRepository := repository.FiftyFiftyLinkRepository{DB: DB}
+
+	shortenService := service.NewShortenService(urlMappingCache, metrics.CacheRequestsTotal, &urlMappingRepository)
+	shortCodeService := service.NewShortCodeService()
+	fiftyFiftyService := service.NewFiftyFiftyLinkService(&fiftyFiftyRepository)
 
 	indexHandler := handlers.NewIndexHandler()
 	healthCheckHandler := handlers.NewHealthCheckHandler()
-	urlHandler := handlers.NewURLHandler(shortCodeService)
+	urlHandler := handlers.NewURLHandler(shortenService)
+	fiftyFiftyHandler := handlers.NewFiftyFiftyHandler(fiftyFiftyService, shortCodeService)
 
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)
@@ -73,9 +67,17 @@ func main() {
 
 	r.Use(cors.Handler(corsOptions))
 
+	// prometheus metrics endpoint
 	r.Handle("/api/v1/metrics", promhttp.Handler())
+
 	r.Get("/", indexHandler.AppHandler)
+
+	// Redirect from short code to original URL
 	r.Get("/{shortCode}", urlHandler.RedirectFromMapping)
+
+	r.Get("/ff/{shortCode}", fiftyFiftyHandler.Redirect)
+	r.Post("/api/v1/ff/", fiftyFiftyHandler.Create)
+
 	r.Get("/api/v1/health", healthCheckHandler.HealthCheckHandler)
 	r.Post("/api/v1/mappings", urlHandler.CreateShortURL)
 

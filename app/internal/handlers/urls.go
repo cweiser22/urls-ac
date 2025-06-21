@@ -3,19 +3,19 @@ package handlers
 import (
 	"encoding/json"
 	"github.com/cweiser22/urls-ac/internal/service"
+	"github.com/cweiser22/urls-ac/internal/utils"
 	"github.com/go-chi/chi/v5"
 	"github.com/spf13/viper"
 
-	"log/slog"
 	"net/http"
 )
 
 type URLHandler struct {
-	ShortCodeService *service.ShortCodeService
+	ShortCodeService *service.ShortenService
 	RedirectProtocol string
 }
 
-func NewURLHandler(service *service.ShortCodeService) *URLHandler {
+func NewURLHandler(service *service.ShortenService) *URLHandler {
 	environment := viper.GetString("environment")
 	redirectProtocol := "http://"
 	if environment == "production" {
@@ -51,6 +51,8 @@ type CreateShortURLRequest struct {
 
 type CreateShortURLResponse struct {
 	ShortURL string `json:"shortUrl"`
+	URLa     string `json:"urlA"`
+	URLb     string `json:"urlB"`
 }
 
 func (h *URLHandler) CreateShortURL(w http.ResponseWriter, r *http.Request) {
@@ -62,13 +64,14 @@ func (h *URLHandler) CreateShortURL(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// if long url does not start with http or https, prepend http://
-	if !((len(requestBody.LongURL) > 4 && requestBody.LongURL[:4] == "http") || (len(requestBody.LongURL) > 5 && requestBody.LongURL[:5] == "https")) {
-		requestBody.LongURL = "http://" + requestBody.LongURL
+	longURL, err := utils.ValidateAndFixURL(requestBody.LongURL)
+	if err != nil {
+		http.Error(w, "Invalid URL: "+requestBody.LongURL, http.StatusBadRequest)
+		return
 	}
 
 	// Create a new short URL mapping
-	mapping, err := h.ShortCodeService.GetOrCreateMapping(requestBody.LongURL)
+	mapping, err := h.ShortCodeService.CreateURLMapping(longURL)
 	if err != nil {
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
@@ -79,8 +82,6 @@ func (h *URLHandler) CreateShortURL(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Internal Server Error: Host not configured", http.StatusInternalServerError)
 		return
 	}
-
-	slog.Info(h.RedirectProtocol)
 
 	responseBody := CreateShortURLResponse{
 		ShortURL: h.RedirectProtocol + host + "/" + mapping.ShortCode,
