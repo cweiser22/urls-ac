@@ -79,7 +79,7 @@ export function CreateFiftyFiftyLink({updateResult}: Props) {
     }
 
     return (
-        <Card>
+        <Card className={""}>
             <CardHeader>
                 <CardTitle>
                     Create a Fifty-Fifty Link

@@ -37,12 +37,12 @@ func main() {
 
 	urlMappingCache := cache.NewURLMappingCache(redisClient)
 
-	urlMappingRepository := repository.URLMappingsRepository{DB: DB}
-	fiftyFiftyRepository := repository.FiftyFiftyLinkRepository{DB: DB}
+	urlMappingRepository := repository.NewURLMappingsRepository(DB)
+	fiftyFiftyRepository := repository.NewFiftyFiftyLinkRepository(DB)
 
-	shortenService := service.NewShortenService(urlMappingCache, metrics.CacheRequestsTotal, &urlMappingRepository)
+	shortenService := service.NewShortenService(urlMappingCache, metrics.CacheRequestsTotal, urlMappingRepository)
 	shortCodeService := service.NewShortCodeService()
-	fiftyFiftyService := service.NewFiftyFiftyLinkService(&fiftyFiftyRepository)
+	fiftyFiftyService := service.NewFiftyFiftyLinkService(fiftyFiftyRepository)
 
 	indexHandler := handlers.NewIndexHandler()
 	healthCheckHandler := handlers.NewHealthCheckHandler()
