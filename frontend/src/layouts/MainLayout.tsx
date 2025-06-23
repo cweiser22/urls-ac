@@ -1,4 +1,4 @@
-import {type ReactNode} from "react"
+import {type ReactNode, useState} from "react"
 import {Toaster} from "sonner";
 import {Link} from "@tanstack/react-router";
 import {Button} from "@/components/ui/button.tsx";
@@ -7,7 +7,7 @@ import {Drawer, DrawerContent, DrawerTrigger} from "@/components/ui/drawer.tsx";
 import {NewFooter} from "@/components/NewFooter.tsx";
 
 export function MainLayout({ children }: { children: ReactNode }) {
-
+    const [open, setOpen] = useState(false);
     return (
         <div className="min-h-screen flex flex-col w-full">
             <header className="w-full border-b px-4">
@@ -24,7 +24,7 @@ export function MainLayout({ children }: { children: ReactNode }) {
                         <Link to={"/signup"} className="hover:underline">Sign up</Link>*/}
                     </nav>
                     <div className="lg:hidden">
-                        <Drawer direction={"right"}>
+                        <Drawer direction={"right"} open={open} onOpenChange={setOpen}>
                             <DrawerTrigger asChild>
                                 <Button variant="outline">
                                     <Menu className="h-5 w-5" />
@@ -33,15 +33,21 @@ export function MainLayout({ children }: { children: ReactNode }) {
                             <DrawerContent className="p-6 flex flex-col">
                                 <ul className="space-y-4">
                                     <li>
-                                        <Link to={"/"} className="font-semibold">Shorten</Link>
+                                        <Link onClick={() => setOpen(false)} to={"/"} className="font-semibold">Shorten</Link>
                                     </li>
                                     <li>
-                                        <Link to={"/fiftyfifty"} className="font-semibold">FiftyFifty</Link>
+                                        <Link onClick={() => setOpen(false)} to={"/fiftyfifty"} className="font-semibold">FiftyFifty</Link>
                                     </li>
+
                                 </ul>
                                 <div className={"flex-1"}></div>
 
                                 <ul className="space-y-4 text-muted-foreground text-sm">
+                                    <li>
+                                        <a href="https://github.com/cweiser22/urls-ac" className="font-semibold" >
+                                            Github
+                                        </a>
+                                    </li>
                                     <li>
                                         <a href={"https://www.termsfeed.com/live/f9d3360a-2efd-4c57-8641-1869e00209c8"} className="font-semibold">Terms of Service</a>
                                     </li>

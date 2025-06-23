@@ -10,6 +10,13 @@ type URLMappingsRepository struct {
 	DB *sqlx.DB
 }
 
+// NewURLMappingsRepository creates a new instance of URLMappingsRepository
+func NewURLMappingsRepository(db *sqlx.DB) *URLMappingsRepository {
+	return &URLMappingsRepository{
+		DB: db,
+	}
+}
+
 type CreateURLMapping struct {
 	LongURL   string `db:"long_url"`
 	ShortCode string `db:"short_code"`

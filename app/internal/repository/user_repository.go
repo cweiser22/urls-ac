@@ -11,6 +11,13 @@ type UserRepository struct {
 	DB *sqlx.DB
 }
 
+// NewUserRepository creates a new UserRepository with the provided database connection.
+func NewUserRepository(db *sqlx.DB) *UserRepository {
+	return &UserRepository{
+		DB: db,
+	}
+}
+
 type CreateUserDTO struct {
 	Email        string `db:"email"`
 	PasswordHash string `db:"password_hash"`

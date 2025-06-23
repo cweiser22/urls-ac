@@ -11,6 +11,13 @@ type FiftyFiftyLinkRepository struct {
 	DB *sqlx.DB
 }
 
+// NewFiftyFiftyLinkRepository creates a new instance of FiftyFiftyLinkRepository.
+func NewFiftyFiftyLinkRepository(db *sqlx.DB) *FiftyFiftyLinkRepository {
+	return &FiftyFiftyLinkRepository{
+		DB: db,
+	}
+}
+
 // CreateFiftyFiftyLinkDTO is used to insert a new FiftyFiftyLink.
 type CreateFiftyFiftyLinkDTO struct {
 	Probability float64 `db:"probability_a"`
