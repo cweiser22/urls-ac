@@ -25,26 +25,6 @@ services:
       - app
 
 
-
-  postgres:
-    image: postgres:latest
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: url_shortener
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    networks:
-      - urls-ac-network
-    ports:
-      - "5433:5432"
-
-  redis:
-    image: redis:latest
-
-    networks:
-      - urls-ac-network
-
   prometheus:
     image: prom/prometheus
     volumes:
@@ -55,9 +35,7 @@ services:
       - app
 
   grafana:
-    image: grafana/grafana
-    ports:
-      - "3000:3000"
+    image: grafana/grafana:latest
     volumes:
       - grafana-storage:/var/lib/grafana
       - ./grafana/grafana.ini:/etc/grafana/grafana.ini
