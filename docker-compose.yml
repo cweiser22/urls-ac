@@ -18,6 +18,7 @@ services:
     volumes:
       - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
       - ./ssl:/etc/ssl
+      - /etc/letsencrypt:/etc/letsencrypt:ro
       - ./frontend/dist:/var/www/urls-ac-frontend
     networks:
       - urls-ac-network
