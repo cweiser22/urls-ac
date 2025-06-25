@@ -17,7 +17,7 @@ services:
         - "443:443"
     volumes:
       - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
-      - /etc/letsencrypt/live/urls.ac:/etc/ssl
+      - ./ssl:/etc/ssl
       - ./frontend/dist:/var/www/urls-ac-frontend
     networks:
       - urls-ac-network
