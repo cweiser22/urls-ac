@@ -79,7 +79,8 @@ func main() {
 	r.Post("/api/v1/ff/", fiftyFiftyHandler.Create)
 
 	r.Get("/api/v1/health", healthCheckHandler.HealthCheckHandler)
-	r.Post("/api/v1/mappings", urlHandler.CreateShortURL)
+
+	r.Post("/api/v1/mappings/", urlHandler.CreateShortURL)
 
 	err = http.ListenAndServe(":8080", r)
 	if err != nil {
