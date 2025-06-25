@@ -51,8 +51,6 @@ type CreateShortURLRequest struct {
 
 type CreateShortURLResponse struct {
 	ShortURL string `json:"shortUrl"`
-	URLa     string `json:"urlA"`
-	URLb     string `json:"urlB"`
 }
 
 func (h *URLHandler) CreateShortURL(w http.ResponseWriter, r *http.Request) {

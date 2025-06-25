@@ -25,6 +25,12 @@ func NewFiftyFiftyHandler(service *service.FiftyFiftyLinkService, shortCodeServi
 	return &FiftyFiftyHandler{fiftyFiftyService: service, shortCodeService: shortCodeService, redirectProtocol: redirectProtocol}
 }
 
+type CreateFiftyFiftyLinkResponse struct {
+	ShortURL string `json:"shortUrl"`
+	URLa     string `json:"urlA"`
+	URLb     string `json:"urlB"`
+}
+
 type createRequest struct {
 	Probability float64 `json:"probability"`
 	URLa        string  `json:"urlA"`
@@ -70,7 +76,7 @@ func (h *FiftyFiftyHandler) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	responseBody := CreateShortURLResponse{
+	responseBody := CreateFiftyFiftyLinkResponse{
 		ShortURL: h.redirectProtocol + host + "/ff/" + link.ShortCode,
 		URLa:     link.URLa,
 		URLb:     link.URLb,

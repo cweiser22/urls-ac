@@ -17,6 +17,7 @@ export function MainLayout({ children }: { children: ReactNode }) {
                         <nav className="space-x-4 text-sm md:block hidden">
                             <Link to={"/"} className="hover:underline">Shorten</Link>
                             <Link to={"/fiftyfifty"} className="hover:underline">FiftyFifty</Link>
+                            <Link to={"/fiftyfifty"} className="hover:underline">API</Link>
                         </nav>
                     </div>
                     <nav className="space-x-4 text-sm md:block hidden">
@@ -37,6 +38,9 @@ export function MainLayout({ children }: { children: ReactNode }) {
                                     </li>
                                     <li>
                                         <Link onClick={() => setOpen(false)} to={"/fiftyfifty"} className="font-semibold">FiftyFifty</Link>
+                                    </li>
+                                    <li>
+                                        <Link onClick={() => setOpen(false)} to={"/apidocs"} className="font-semibold">FiftyFifty</Link>
                                     </li>
 
                                 </ul>
