@@ -17,7 +17,7 @@ export function ShortenURL({updateResult}: Props) {
         // Logic to shorten the URL will go here
         try {
             toast.success('Successfully shortened URL!');
-            const response = await fetch(`${apiBase}/api/v1/mappings`, {
+            const response = await fetch(`${apiBase}/api/v1/mappings/`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
