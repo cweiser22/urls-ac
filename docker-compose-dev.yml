@@ -12,7 +12,6 @@ services:
       - redis
     volumes:
       - ./app:/app
-      - /var/run/docker.sock:/var/run/docker.sock
     environment:
       - HOST=localhost:8080
       - ENVIRONMENT=development
