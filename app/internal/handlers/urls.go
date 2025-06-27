@@ -51,6 +51,7 @@ type CreateShortURLRequest struct {
 
 type CreateShortURLResponse struct {
 	ShortURL string `json:"shortUrl"`
+	LongURL  string `json:"longUrl"`
 }
 
 func (h *URLHandler) CreateShortURL(w http.ResponseWriter, r *http.Request) {
@@ -77,12 +78,16 @@ func (h *URLHandler) CreateShortURL(w http.ResponseWriter, r *http.Request) {
 
 	host := viper.GetString("host")
 	if host == "" {
+		json.NewEncoder(w).Encode(map[string]string{
+			"error": "Invalid URL",
+		})
 		http.Error(w, "Internal Server Error: Host not configured", http.StatusInternalServerError)
 		return
 	}
 
 	responseBody := CreateShortURLResponse{
 		ShortURL: h.RedirectProtocol + host + "/" + mapping.ShortCode,
+		LongURL:  mapping.LongURL,
 	}
 
 	// Respond with the short URL

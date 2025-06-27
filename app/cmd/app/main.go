@@ -77,10 +77,12 @@ func main() {
 
 	r.Get("/ff/{shortCode}", fiftyFiftyHandler.Redirect)
 	r.Post("/api/v1/ff/", fiftyFiftyHandler.Create)
+	r.Post("/api/v1/fiftyfifty/", fiftyFiftyHandler.Create)
 
 	r.Get("/api/v1/health", healthCheckHandler.HealthCheckHandler)
 
 	r.Post("/api/v1/mappings/", urlHandler.CreateShortURL)
+	r.Post("/api/v1/shorten/", urlHandler.CreateShortURL)
 
 	err = http.ListenAndServe(":8080", r)
 	if err != nil {

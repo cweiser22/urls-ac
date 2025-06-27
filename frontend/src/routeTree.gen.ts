@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as FiftyfiftyRouteImport } from './routes/fiftyfifty'
+import { Route as ApidocsRouteImport } from './routes/apidocs'
 import { Route as IndexRouteImport } from './routes/index'
 
 const SignupRoute = SignupRouteImport.update({
@@ -29,6 +30,11 @@ const FiftyfiftyRoute = FiftyfiftyRouteImport.update({
   path: '/fiftyfifty',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApidocsRoute = ApidocsRouteImport.update({
+  id: '/apidocs',
+  path: '/apidocs',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -37,12 +43,14 @@ const IndexRoute = IndexRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/apidocs': typeof ApidocsRoute
   '/fiftyfifty': typeof FiftyfiftyRoute
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/apidocs': typeof ApidocsRoute
   '/fiftyfifty': typeof FiftyfiftyRoute
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
@@ -50,20 +58,22 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/apidocs': typeof ApidocsRoute
   '/fiftyfifty': typeof FiftyfiftyRoute
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/fiftyfifty' | '/login' | '/signup'
+  fullPaths: '/' | '/apidocs' | '/fiftyfifty' | '/login' | '/signup'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/fiftyfifty' | '/login' | '/signup'
-  id: '__root__' | '/' | '/fiftyfifty' | '/login' | '/signup'
+  to: '/' | '/apidocs' | '/fiftyfifty' | '/login' | '/signup'
+  id: '__root__' | '/' | '/apidocs' | '/fiftyfifty' | '/login' | '/signup'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ApidocsRoute: typeof ApidocsRoute
   FiftyfiftyRoute: typeof FiftyfiftyRoute
   LoginRoute: typeof LoginRoute
   SignupRoute: typeof SignupRoute
@@ -92,6 +102,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FiftyfiftyRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/apidocs': {
+      id: '/apidocs'
+      path: '/apidocs'
+      fullPath: '/apidocs'
+      preLoaderRoute: typeof ApidocsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -104,6 +121,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ApidocsRoute: ApidocsRoute,
   FiftyfiftyRoute: FiftyfiftyRoute,
   LoginRoute: LoginRoute,
   SignupRoute: SignupRoute,
