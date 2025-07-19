@@ -25,7 +25,7 @@ function Index() {
 
     return (
         <div className={"container mx-auto max-w-3xl px-4 py-8"}>
-            <h1 className={"text-2xl mb-2 font-bold"}>Fifty Fifty URL Generator</h1>
+            <h1 className={"text-2xl mb-2 font-bold"}>True 50/50 URL Generator</h1>
             <div className={"flex flex-col "}>
                 <div className={"w-full lg:max-width-xs"}>
                     <CreateFiftyFiftyLink updateResult={updateResult}/>
@@ -36,7 +36,7 @@ function Index() {
                     <section className="max-w-3xl mx-auto p-6 space-y-8 text-gray-800">
 
                         <div>
-                            <h2 className="text-2xl font-bold mb-2">🎲 What Is a FiftyFifty Link?</h2>
+                            <h2 className="text-2xl font-bold mb-2">What Is a 50/50 Link?</h2>
                             <p className="text-base leading-relaxed">
                                 A <strong>FiftyFifty link</strong> is a unique, shareable URL that randomly redirects to one of two links you choose.
                                 When someone clicks your custom link, there's a <strong>50% chance they'll be sent to URL A</strong> and a <strong>50% chance they'll land on URL B</strong>.
@@ -46,7 +46,7 @@ function Index() {
 
 
                         <div>
-                            <h2 className="text-2xl font-bold mb-2">🛠️ How to Use the FiftyFifty Link Generator</h2>
+                            <h2 className="text-2xl font-bold mb-2">How to Use the FiftyFifty Link Generator</h2>
                             <ol className="list-decimal pl-5 space-y-3 text-base leading-relaxed">
                                 <li>
                                     <strong>Enter Two URLs</strong><br/>
@@ -58,16 +58,16 @@ function Index() {
                                 </li>
                                 <li>
                                     <strong>Share Your Link</strong><br/>
-                                    When someone clicks your new link, they'll be randomly sent to one of the two destinations. Each visit is a coin flip!
+                                    When someone clicks your new link, they'll be randomly sent to one of the two destinations.
                                 </li>
                             </ol>
                         </div>
 
 
                         <div>
-                            <h2 className="text-2xl font-bold mb-2">🎛️ Customize the Odds (Optional)</h2>
+                            <h2 className="text-2xl font-bold mb-2">Customize the Odds (Optional)</h2>
                             <p className="text-base leading-relaxed">
-                                Want more control? You can go beyond the 50/50 setup using our <strong>"Customize Probability"</strong> feature.
+                                If you don't want simple 50/50 odds, you can customize the chances of getting either link by using the <strong>"Customize Probability"</strong> feature.
                             </p>
                             <ul className="list-disc pl-5 space-y-2 text-base leading-relaxed">
                                 <li>
@@ -80,13 +80,10 @@ function Index() {
                                     Once set, the link you generate will follow your custom odds instead of an even split.
                                 </li>
                             </ul>
-                            <p className="mt-2 text-base leading-relaxed">
-                                This is great for marketers, A/B testing experiments, or anyone who wants to stack the odds — just a little.
-                            </p>
+
                         </div>
                     </section>
 
-                    <p className={"text-md"}>If a 50/50 coin toss isn't for you though, feel free to use the slider to customize the odds.</p>
                 </div>
 
             </div>
