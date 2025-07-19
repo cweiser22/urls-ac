@@ -5,13 +5,12 @@ import (
 	"github.com/cweiser22/urls-ac/internal/config"
 	"github.com/cweiser22/urls-ac/internal/db"
 	"github.com/cweiser22/urls-ac/internal/handlers"
-	"github.com/cweiser22/urls-ac/internal/metrics"
 	"github.com/cweiser22/urls-ac/internal/repository"
 	"github.com/cweiser22/urls-ac/internal/service"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/cors"
-	"github.com/prometheus/client_golang/prometheus/promhttp"
+	"github.com/newrelic/go-agent/v3/newrelic"
 	"github.com/spf13/viper"
 
 	"net/http"
@@ -37,10 +36,16 @@ func main() {
 
 	urlMappingCache := cache.NewURLMappingCache(redisClient)
 
+	app, err := newrelic.NewApplication(
+		newrelic.ConfigAppName("URLS_AC"),
+		newrelic.ConfigLicense("eef272e2e937a514e5cfe9a64f03e4a5FFFFNRAL"),
+		newrelic.ConfigAppLogForwardingEnabled(true),
+	)
+
 	urlMappingRepository := repository.NewURLMappingsRepository(DB)
 	fiftyFiftyRepository := repository.NewFiftyFiftyLinkRepository(DB)
 
-	shortenService := service.NewShortenService(urlMappingCache, metrics.CacheRequestsTotal, urlMappingRepository)
+	shortenService := service.NewShortenService(urlMappingCache, urlMappingRepository)
 	shortCodeService := service.NewShortCodeService()
 	fiftyFiftyService := service.NewFiftyFiftyLinkService(fiftyFiftyRepository)
 
@@ -67,20 +72,17 @@ func main() {
 
 	r.Use(cors.Handler(corsOptions))
 
-	// prometheus metrics endpoint
-	r.Handle("/api/v1/metrics", promhttp.Handler())
-
 	r.Get("/", indexHandler.AppHandler)
 
 	// Redirect from short code to original URL
-	r.Get("/{shortCode}", urlHandler.RedirectFromMapping)
+	r.Get(newrelic.WrapHandleFunc(app, "/{shortCode}", urlHandler.RedirectFromMapping))
 
-	r.Get("/ff/{shortCode}", fiftyFiftyHandler.Redirect)
-	r.Post("/api/v1/ff/", fiftyFiftyHandler.Create)
+	r.Get(newrelic.WrapHandleFunc(app, "/ff/{shortCode}", fiftyFiftyHandler.Redirect))
+	r.Post(newrelic.WrapHandleFunc(app, "/api/v1/ff/", fiftyFiftyHandler.Create))
 
 	r.Get("/api/v1/health", healthCheckHandler.HealthCheckHandler)
 
-	r.Post("/api/v1/mappings/", urlHandler.CreateShortURL)
+	r.Post(newrelic.WrapHandleFunc(app, "/api/v1/mappings/", urlHandler.CreateShortURL))
 
 	err = http.ListenAndServe(":8080", r)
 	if err != nil {

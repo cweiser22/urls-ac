@@ -26,26 +26,6 @@ services:
       - app
 
 
-  prometheus:
-    image: prom/prometheus
-    volumes:
-        - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
-    networks:
-      - urls-ac-network
-    depends_on:
-      - app
-
-  grafana:
-    image: grafana/grafana:latest
-    volumes:
-      - grafana-storage:/var/lib/grafana
-      - ./grafana/grafana.ini:/etc/grafana/grafana.ini
-      - ./grafana/dashboards:/var/lib/grafana/dashboards
-    networks:
-      - urls-ac-network
-    depends_on:
-      - prometheus
-
   agent:
     container_name: newrelic-infra
     build:

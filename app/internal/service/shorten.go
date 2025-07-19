@@ -7,19 +7,17 @@ import (
 	"log"
 
 	"fmt"
-	"github.com/prometheus/client_golang/prometheus"
 )
 
 type ShortenService struct {
-	CacheMetrics         *prometheus.CounterVec
 	ShortCodeService     *ShortCodeService
 	URLMappingCache      *cache.URLMappingCache
 	urlMappingRepository *repository.URLMappingsRepository
 }
 
-func NewShortenService(urlMappingCache *cache.URLMappingCache, cacheMetrics *prometheus.CounterVec, urlMappingRepository *repository.URLMappingsRepository) *ShortenService {
+func NewShortenService(urlMappingCache *cache.URLMappingCache, urlMappingRepository *repository.URLMappingsRepository) *ShortenService {
 	return &ShortenService{
-		CacheMetrics:         cacheMetrics,
+		//CacheMetrics:         cacheMetrics,
 		URLMappingCache:      urlMappingCache,
 		urlMappingRepository: urlMappingRepository,
 	}
@@ -34,12 +32,12 @@ func (s *ShortenService) GetLongURL(shortCode string) (string, error) {
 
 	// handle a cache hit
 	if cachedURL != "" {
-		s.CacheMetrics.With(prometheus.Labels{"result": "hit"}).Inc()
+		//s.CacheMetrics.With(prometheus.Labels{"result": "hit"}).Inc()
 		return cachedURL, nil // Return cached URLMapping if available
 	}
 
 	// handle a cache miss (database lookup)
-	s.CacheMetrics.With(prometheus.Labels{"result": "miss"}).Inc()
+	//s.CacheMetrics.With(prometheus.Labels{"result": "miss"}).Inc()
 
 	urlMapping, err := s.urlMappingRepository.GetByShortCode(shortCode)
 	if err != nil {
