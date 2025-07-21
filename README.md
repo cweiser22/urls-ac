@@ -8,7 +8,7 @@ A simple and efficient URL management project.
 - Built with Go 🐹
 - Postgres for storage
 - Redis to cache hot URLs
-- Prometheus/Grafana for monitoring
+- New Relic for monitoring (formerly Prometheus/Grafana)
 - Kubernetes deployment ready
 - TLS
 - DB migrations with `go-migrate`
